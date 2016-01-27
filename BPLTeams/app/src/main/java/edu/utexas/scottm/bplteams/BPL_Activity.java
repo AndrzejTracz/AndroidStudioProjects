@@ -6,10 +6,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -19,31 +19,55 @@ public class BPL_Activity extends ActionBarActivity {
     private static Random randNumGen = new Random();
 
     // parallel array of images matched to spinner array
-    // VERY FRAGILE.
-    private int[] imageIds = {R.drawable.bpl, R.drawable.arsenal,
-            R.drawable.chelsea, R.drawable.everton, R.drawable.tottenham};
+    // Some what brittle. We assume the String array with
+    // team names in Strings.xml matches the drawable name,
+    // except for case and _ instead of spaces.
+    private ArrayList<Integer> imageIDs;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bpl_);
+        getImageIDs();
         setSpinnerListener();
         setRandomButtonListener();
     }
 
+    private void getImageIDs() {
+        String[] teamNames = getResources().getStringArray(R.array.football_clubs);
+        imageIDs = new ArrayList<>();
+        // Strings for spinner are upper case with spaces.
+        // Corresponding drawable is all lower case with _ for spaces.
+        for (String name : teamNames) {
+            name = name.toLowerCase();
+            name = name.replace(" ", "_");
+            imageIDs.add(getResources().getIdentifier(name, "drawable", getPackageName()));
+        }
+    }
+
     private void setRandomButtonListener() {
-        ((Button) findViewById(R.id.random_button)).setOnClickListener(
+
+        (findViewById(R.id.random_button)).setOnClickListener(
                 new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        int index = randNumGen.nextInt(imageIds.length);
-                        Log.d(TAG, "random index selected = " + index);
-                        ImageView iv = (ImageView) findViewById(R.id.imageView);
-                        iv.setImageResource(imageIds[index]);
+                        // get the current selection
                         Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
-                        spinner.setSelection(index);
+                        int oldIndex = spinner.getSelectedItemPosition();
+                        Log.d(TAG, "old index  = " + oldIndex);
+                        // don't want to pick the PBL symbol itself, so index 1 - 20
+                        int newIndex = randNumGen.nextInt(imageIDs.size() - 15) + 1;
+                        // don't let the new one be the old one
+                        // are we worried this will result in infinite loop with just 1 team??
+//                        while (oldIndex == newIndex) {
+//                            newIndex = randNumGen.nextInt(imageIDs.size() - 15) + 1;
+//                        }
+                        Log.d(TAG, "new index  = " + newIndex);
+                        ImageView iv = (ImageView) findViewById(R.id.imageView);
+                        iv.setImageResource(imageIDs.get(newIndex));
+                        spinner.setSelection(newIndex);
                     }
                 });
 
@@ -58,7 +82,7 @@ public class BPL_Activity extends ActionBarActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 Log.d(TAG, "id of selected item: " + position);
                 ImageView iv = (ImageView) findViewById(R.id.imageView);
-                iv.setImageResource(imageIds[position]);
+                iv.setImageResource(imageIDs.get(position));
             }
 
             @Override
