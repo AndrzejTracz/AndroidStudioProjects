@@ -1,7 +1,7 @@
 package edu.utexas.scottm.bplteams;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,15 +13,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class BPL_Activity extends ActionBarActivity {
+public class BPL_Activity extends Activity {
 
     private static final String TAG = "BPL Activity";
     private static Random randNumGen = new Random();
 
-    // parallel array of images matched to spinner array
+    // Parallel list of images matched to spinner array
     // Some what brittle. We assume the String array with
     // team names in Strings.xml matches the drawable name,
-    // except for case and _ instead of spaces.
+    // except for upper / lower case case and _ instead of spaces.
     private ArrayList<Integer> imageIDs;
 
 
@@ -31,7 +31,7 @@ public class BPL_Activity extends ActionBarActivity {
         setContentView(R.layout.activity_bpl_);
         getImageIDs();
         setSpinnerListener();
-        setRandomButtonListener();
+        // setRandomButtonListener();
     }
 
     private void getImageIDs() {
@@ -46,55 +46,71 @@ public class BPL_Activity extends ActionBarActivity {
         }
     }
 
-    private void setRandomButtonListener() {
-
-        (findViewById(R.id.random_button)).setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        // get the current selection
-                        Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
-                        int oldIndex = spinner.getSelectedItemPosition();
-                        Log.d(TAG, "old index  = " + oldIndex);
-                        // don't want to pick the PBL symbol itself, so index 1 - 20
-                        int newIndex = randNumGen.nextInt(imageIDs.size() - 15) + 1;
-                        // don't let the new one be the old one
-                        // are we worried this will result in infinite loop with just 1 team??
-//                        while (oldIndex == newIndex) {
-//                            newIndex = randNumGen.nextInt(imageIDs.size() - 15) + 1;
-//                        }
-                        Log.d(TAG, "new index  = " + newIndex);
-                        ImageView iv = (ImageView) findViewById(R.id.imageView);
-                        iv.setImageResource(imageIDs.get(newIndex));
-                        spinner.setSelection(newIndex);
-                    }
-                });
-
+    public void pickRandom(View v) {
+        Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
+        int oldIndex = spinner.getSelectedItemPosition();
+        Log.d(TAG, "old index  = " + oldIndex);
+        // don't want to pick the BPL symbol itself, so index 1 - 20
+        int newIndex = randNumGen.nextInt(imageIDs.size() - 1) + 1;
+        // don't let the new one be the old one
+        // are we worried this will result in infinite loop with just 1 team??
+        while (oldIndex == newIndex) {
+            newIndex = randNumGen.nextInt(imageIDs.size() - 1) + 1;
+        }
+        Log.d(TAG, "new index  = " + newIndex);
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        iv.setImageResource(imageIDs.get(newIndex));
+        spinner.setSelection(newIndex);
     }
+
+//    private void setRandomButtonListener() {
+//        (findViewById(R.id.random_button)).setOnClickListener(
+//                new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        // get the current selection
+//                        Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
+//                        int oldIndex = spinner.getSelectedItemPosition();
+//                        Log.d(TAG, "old index  = " + oldIndex);
+//                        // don't want to pick the BPL symbol itself, so index 1 - 20
+//                        int newIndex = randNumGen.nextInt(imageIDs.size() - 1) + 1;
+//                        // don't let the new one be the old one
+//                        // are we worried this will result in infinite loop with just 1 team??
+//                        while (oldIndex == newIndex) {
+//                            newIndex = randNumGen.nextInt(imageIDs.size() - 1) + 1;
+//                        }
+//                        Log.d(TAG, "new index  = " + newIndex);
+//                        ImageView iv = (ImageView) findViewById(R.id.imageView);
+//                        iv.setImageResource(imageIDs.get(newIndex));
+//                        spinner.setSelection(newIndex);
+//                    }
+//                });
+//    }
 
 
     private void setSpinnerListener() {
         Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
 
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                Log.d(TAG, "id of selected item: " + position);
-                ImageView iv = (ImageView) findViewById(R.id.imageView);
-                iv.setImageResource(imageIDs.get(position));
-            }
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        Log.d(TAG, "id of selected item: " + position);
+                        ImageView iv = (ImageView) findViewById(R.id.imageView);
+                        iv.setImageResource(imageIDs.get(position));
+                    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // nothing to do
-            }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // nothing to do
+                    }
 
-        });
+                });
     }
 
     // from http://developer.android.com/guide/topics/ui/controls/spinner.html
-    // NOT NEEDED IF SPINNER ENTRIES SET IN XML
+    // NOT NEEDED IF SPINNER ENTRIES SET IN XML AS IN CURRENT VERSION OF PROGRAM
     private void populateSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.football_club_spinner);
 

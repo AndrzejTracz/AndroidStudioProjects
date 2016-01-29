@@ -14,9 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pick_logo_instructions"
-        android:textSize="30dp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center" />
 
     <Spinner
         android:id="@+id/football_club_spinner"
@@ -42,7 +42,8 @@
         android:text="@string/random_button"
         android:id="@+id/random_button"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:onClick="pickRandom" />
 
 
 </LinearLayout>

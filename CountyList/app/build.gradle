@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "cs378.exmaple"
-        minSdkVersion 14
-        targetSdkVersion 17
+        minSdkVersion 15
+        targetSdkVersion 23
     }
 
     buildTypes {

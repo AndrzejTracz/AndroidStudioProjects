@@ -6,20 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CountryActivity extends ListActivity {
 
@@ -27,9 +21,9 @@ public class CountryActivity extends ListActivity {
 
     private ListView view;
     private ArrayList<String> countries;
-    private Map<String, Boolean> countriesSafeStatus;
     private ArrayAdapter<String> adapter;
 
+    // for regular version
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +33,81 @@ public class CountryActivity extends ListActivity {
         createOnItemClickListener();
     }
 
+//    // for version with switches
+//    @Override
+//    public void onCreate(Bundle bundle) {
+//        super.onCreate(bundle);
+//        ArrayList<CountryRowData> list
+//                = new ArrayList<CountryRowData>();
+//        String[] countries
+//                = getResources().getStringArray(R.array.countries);
+//        for (String s : countries) {
+//            list.add(new CountryRowData(s, true));
+//        }
+//        setListAdapter(new SafeAdapter(list));
+//    }
+//
+//    private CountryRowData getModel(int position) {
+//        return(((SafeAdapter)getListAdapter()).getItem(position));
+//    }
+//
+//    // code adapted from The Busy Coder's Guide to Android Development
+//    // pages 1139 - 1140.
+//    private class SafeAdapter extends ArrayAdapter<CountryRowData> {
+//
+//        SafeAdapter(ArrayList<CountryRowData> list) {
+//            super(CountryActivity.this,
+//                    R.layout.complex_list_item,
+//                    R.id.countryTextView,
+//                    list);
+//        }
+//
+//        public View getView(int position, View convertView,
+//                            ViewGroup parent) {
+//
+//            View row = super.getView(position, convertView, parent);
+//            Switch theSwitch = (Switch) row.getTag();
+//            if (theSwitch == null) {
+//                theSwitch = (Switch) row.findViewById(R.id.countrySafeSwitch);
+//                row.setTag(theSwitch);
+//
+//                CompoundButton.OnCheckedChangeListener l =
+//                        new CompoundButton.OnCheckedChangeListener() {
+//                            public void onCheckedChanged(CompoundButton buttonView,
+//                                             boolean isChecked) {
+//                                Integer myPosition=(Integer) buttonView.getTag();
+//                                CountryRowData model = getModel(myPosition);
+//                                model.safe = isChecked;
+//                                LinearLayout parent = (LinearLayout) buttonView.getParent();
+//                                TextView label =
+//                                        (TextView)parent.findViewById(R.id.countryTextView);
+//                                label.setText(model.toString());
+//                            }
+//                        };
+//                theSwitch.setOnCheckedChangeListener(l);
+//            }
+//
+//            CountryRowData model = getModel(position);
+//            theSwitch.setTag(position);
+//            theSwitch.setChecked(model.safe);
+//            return(row);
+//        }
+//    }
+//
+//    private static class CountryRowData {
+//        private String name;
+//        private boolean safe;
+//
+//        private CountryRowData(String n, boolean s) {
+//            name = n;
+//            safe = s;
+//        }
+//
+//        public String toString() {
+//            return name;
+//        }
+//    }
+
     private void createModel() {
         String[] rawData
                 = getResources().getStringArray(R.array.countries);
@@ -46,22 +115,18 @@ public class CountryActivity extends ListActivity {
         countries
                 = new ArrayList<String>(Arrays.asList(rawData));
 
-        // every country is safe to start
-        countriesSafeStatus = new HashMap<String, Boolean>(countries.size());
-        final int NUM = countries.size();
-        for(String country : countries) {
-            countriesSafeStatus.put(country, true);
-        }
-
     }
 
     private void setAdapter() {
         // for layout that is simply a TextView
 //                adapter
-//                    = new ArrayAdapter<String>(this, R.layout.list_item, countries);
+//                    = new ArrayAdapter<String>(
+//                      this,
+//                      R.layout.list_item,
+//                      countries);
 
 
-//        // for layout with TextView in more complex layout
+        // for layout with TextView in more complex layout
         adapter
                 = new ArrayAdapter<String>(
                 this, // context
@@ -101,91 +166,17 @@ public class CountryActivity extends ListActivity {
                 // view.invalidateViews();
 
                 // if we want to perform web search for country
-//                searchWeb(country);
+               // searchWeb(country);
             }
         });
     }
 
     // from https://developer.android.com/guide/components/intents-common.html#Browser
-    public void searchWeb(String query) {
+    public void searchWeb(String countryName) {
         Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-        intent.putExtra(SearchManager.QUERY, query);
+        intent.putExtra(SearchManager.QUERY, countryName);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-        }
-    }
-
-
-//    // implement our own adapter to handle toggle switch
-    class CountryAdapter extends ArrayAdapter<String> {
-
-        CountryAdapter() {
-            super(CountryActivity.this, R.layout.complex_list_item, R.id.countryTextView, countries);
-        }
-
-        @Override
-        public View getView(final int position, View convertView,
-                            ViewGroup parent) {
-
-            if(convertView != null)
-                Log.d(TAG, "convert view: " + ((TextView) convertView.findViewById(R.id.countryTextView)).getText());
-
-            View row = super.getView(position, convertView, parent);
-            ViewHolder holder = (ViewHolder)row.getTag();
-            Log.d(TAG, "in getView. position: " + position + ", country: " +
-                    countries.get(position) + ", holder: " + holder);
-            if (holder == null) {
-                holder = new ViewHolder(row);
-                row.setTag(holder);
-            }
-
-            // likely a better way, but if recycling a view, get old status
-            boolean statusOfOldView = false;
-            String oldCountry = null;
-            if(convertView != null) {
-                oldCountry = (String) ((TextView) convertView.findViewById(R.id.countryTextView)).getText();
-                statusOfOldView = countriesSafeStatus.get(oldCountry);
-            }
-
-            Log.d(TAG, "holder: " + holder + ", safe status: " + countriesSafeStatus.get(position));
-
-            // PROBLEM!! If we are setting the switch on a recycled view
-            // this leads to a call to the listener which mucks up the
-            // old value of safe in the ArrayList!!!
-            holder.safe.setChecked(countriesSafeStatus.get(countries.get(position)));
-
-            // if recycled fix our model. (MUST BE A BETTER WAY!)
-            if(convertView != null) {
-                countriesSafeStatus.put(oldCountry, statusOfOldView);
-            }
-
-            holder.safe.setOnCheckedChangeListener(
-                    new CompoundButton.OnCheckedChangeListener() {
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.d(TAG, "switch checked. position: " + position + ", country: "
-                                    + countries.get(position) + ", isChecked param: " + isChecked);
-                            countriesSafeStatus.put(countries.get(position), isChecked);
-                        }
-                    }
-            );
-
-            return row;
-        }
-    }
-
-    // ViewHolder for complex row: country name and switch for "safe":
-    // separate class???
-    private static class ViewHolder {
-
-        // array adapter will handle country text view for us
-        private Switch safe;
-
-        ViewHolder(View row) {
-            this.safe = (Switch)row.findViewById(R.id.countrySafeSwitch);
-        }
-
-        public String toString() {
-            return "" + safe.isChecked();
         }
     }
 }
