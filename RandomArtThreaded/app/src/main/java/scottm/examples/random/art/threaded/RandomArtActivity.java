@@ -28,12 +28,11 @@ public class RandomArtActivity extends Activity {
 	private ProgressBar progressBar;
 	private Grays grays;
 	private Colors colors;
-	private final int POINT_SIZE = 1;
-	// the expression used to determine the value at
-	// each pixel
+    // the expression used to determine the value at each pixel
 	private RandomExpression exp;
 	private boolean pickRandomExpression;
 	private boolean useColors;
+    private boolean artInProgress;
     private Random r;
 	
     @Override
@@ -71,9 +70,12 @@ public class RandomArtActivity extends Activity {
 
 
 	public void newArt(View v) {
-    	Log.d(TAG, "dimensions of image view: " + artImage.getWidth() + " " + artImage.getHeight());
-    	pickRandomExpression = true;
-    	new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
+        Log.d(TAG, "dimensions of image view: " + artImage.getWidth() + " " + artImage.getHeight());
+    	if(!artInProgress) {
+			artInProgress = true;
+			pickRandomExpression = true;
+			new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
+		}
     }
     
 	public void saveEquation(View v) {
@@ -176,11 +178,12 @@ public class RandomArtActivity extends Activity {
     		createBitmap(dimensions);
     		final int MAX_X = dimensions[0];
     		final int MAX_Y = dimensions[1];
+            final int POINT_SIZE = 1;
     		final double X_INC = 2.0 / MAX_X; // * POINT_SIZE; FOR LOWER RESOLUTION IMAGES
     		final double Y_INC = 2.0 / MAX_Y ; // * POINT_SIZE; FOR LOWER RESOLUTION IMAGES
     		final int SHADE = shader.getNumShades();
-    		double xVal = -1.0;  
-    		for(int x = 0; x < MAX_X; x += POINT_SIZE) {
+    		double xVal = -1.0;
+            for(int x = 0; x < MAX_X; x += POINT_SIZE) {
     			double yVal = -1.0;
     			for(int y = 0; y < MAX_Y; y += POINT_SIZE) {
     				int shade = getGrayShade(xVal, yVal, SHADE);
@@ -198,6 +201,7 @@ public class RandomArtActivity extends Activity {
     	}
     	
     	protected void onPostExecute(Bitmap result) {
+            artInProgress = false;
     		artImage.setImageBitmap(result);
     	}
 

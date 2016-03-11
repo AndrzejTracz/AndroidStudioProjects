@@ -132,9 +132,9 @@ public class BigBangAppActivity extends Activity implements MediaPlayer.OnComple
 
 	}
 	
-	// regular method
-	@Override
-    public void onCompletion(MediaPlayer mp) {
+	 // regular method
+	 @Override
+     public void onCompletion(MediaPlayer mp) {
 	    picture.setImageResource(R.drawable.shake);
 	}
 
@@ -149,33 +149,33 @@ public class BigBangAppActivity extends Activity implements MediaPlayer.OnComple
 //		    picture.setImageResource(R.drawable.shake);
 //	}
 	
-	
+//
 //	// safe method to access network in AsyncTask
 //    @Override
 //    public void onCompletion(MediaPlayer mp) {
 //
 //
-//        // Examples below to load image from netowrk
-//        // right way
-//        DownloadImageTask d = new DownloadImageTask();
-//        d.execute("http://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/082010/longhorn_logo.gif");
+////        // Examples below to load image from network
+////        // right way
+////        DownloadImageTask d = new DownloadImageTask();
+////        d.execute("http://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/082010/longhorn_logo.gif");
 //
 //        // wrong way
-//        // loadImageFromNetwork("http://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/082010/longhorn_logo.gif");
+//         // loadImageFromNetwork("http://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/082010/longhorn_logo.gif");
 //    }
-
-    private Bitmap loadImageFromNetwork(String imageURL) {
-        Bitmap bitmap = null;
-        try {
-            URL url = new URL(imageURL);
-            bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
-        }
-        catch(IOException e) {
-            Log.d(TAG, "problem reading from url: " + imageURL + ", " + e);
-        }
-        return bitmap;
-    }
-    
+//
+//    private Bitmap loadImageFromNetwork(String imageURL) {
+//        Bitmap bitmap = null;
+//        try {
+//            URL url = new URL(imageURL);
+//            bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
+//        }
+//        catch(IOException e) {
+//            Log.d(TAG, "problem reading from url: " + imageURL + ", " + e);
+//        }
+//        return bitmap;
+//    }
+//
     
     
     

@@ -6,10 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,90 +28,90 @@ public class CountryActivity extends ListActivity {
     private ArrayList<String> countries;
     private ArrayAdapter<String> adapter;
 
-    // for regular version
+//    // for regular version
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        createModel();
+//        view = getListView();
+//        setAdapter();
+//        createOnItemClickListener();
+//    }
+
+    // for version with switches
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        createModel();
-        view = getListView();
-        setAdapter();
-        createOnItemClickListener();
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        ArrayList<CountryRowData> list
+                = new ArrayList<CountryRowData>();
+        String[] countries
+                = getResources().getStringArray(R.array.countries);
+        for (String s : countries) {
+            list.add(new CountryRowData(s, true));
+        }
+        setListAdapter(new SafeAdapter(list));
     }
 
-//    // for version with switches
-//    @Override
-//    public void onCreate(Bundle bundle) {
-//        super.onCreate(bundle);
-//        ArrayList<CountryRowData> list
-//                = new ArrayList<CountryRowData>();
-//        String[] countries
-//                = getResources().getStringArray(R.array.countries);
-//        for (String s : countries) {
-//            list.add(new CountryRowData(s, true));
-//        }
-//        setListAdapter(new SafeAdapter(list));
-//    }
-//
-//    private CountryRowData getModel(int position) {
-//        return(((SafeAdapter)getListAdapter()).getItem(position));
-//    }
-//
-//    // code adapted from The Busy Coder's Guide to Android Development
-//    // pages 1139 - 1140.
-//    private class SafeAdapter extends ArrayAdapter<CountryRowData> {
-//
-//        SafeAdapter(ArrayList<CountryRowData> list) {
-//            super(CountryActivity.this,
-//                    R.layout.complex_list_item,
-//                    R.id.countryTextView,
-//                    list);
-//        }
-//
-//        public View getView(int position, View convertView,
-//                            ViewGroup parent) {
-//
-//            View row = super.getView(position, convertView, parent);
-//            Switch theSwitch = (Switch) row.getTag();
-//            if (theSwitch == null) {
-//                theSwitch = (Switch) row.findViewById(R.id.countrySafeSwitch);
-//                row.setTag(theSwitch);
-//
-//                CompoundButton.OnCheckedChangeListener l =
-//                        new CompoundButton.OnCheckedChangeListener() {
-//                            public void onCheckedChanged(CompoundButton buttonView,
-//                                             boolean isChecked) {
-//                                Integer myPosition=(Integer) buttonView.getTag();
-//                                CountryRowData model = getModel(myPosition);
-//                                model.safe = isChecked;
-//                                LinearLayout parent = (LinearLayout) buttonView.getParent();
-//                                TextView label =
-//                                        (TextView)parent.findViewById(R.id.countryTextView);
-//                                label.setText(model.toString());
-//                            }
-//                        };
-//                theSwitch.setOnCheckedChangeListener(l);
-//            }
-//
-//            CountryRowData model = getModel(position);
-//            theSwitch.setTag(position);
-//            theSwitch.setChecked(model.safe);
-//            return(row);
-//        }
-//    }
-//
-//    private static class CountryRowData {
-//        private String name;
-//        private boolean safe;
-//
-//        private CountryRowData(String n, boolean s) {
-//            name = n;
-//            safe = s;
-//        }
-//
-//        public String toString() {
-//            return name;
-//        }
-//    }
+    private CountryRowData getModel(int position) {
+        return(((SafeAdapter)getListAdapter()).getItem(position));
+    }
+
+    // code adapted from The Busy Coder's Guide to Android Development
+    // pages 1139 - 1140.
+    private class SafeAdapter extends ArrayAdapter<CountryRowData> {
+
+        SafeAdapter(ArrayList<CountryRowData> list) {
+            super(CountryActivity.this,
+                    R.layout.complex_list_item,
+                    R.id.countryTextView,
+                    list);
+        }
+
+        public View getView(int position, View convertView,
+                            ViewGroup parent) {
+
+            View row = super.getView(position, convertView, parent);
+            Switch theSwitch = (Switch) row.getTag();
+            if (theSwitch == null) {
+                theSwitch = (Switch) row.findViewById(R.id.countrySafeSwitch);
+                row.setTag(theSwitch);
+
+                CompoundButton.OnCheckedChangeListener l =
+                        new CompoundButton.OnCheckedChangeListener() {
+                            public void onCheckedChanged(CompoundButton buttonView,
+                                             boolean isChecked) {
+                                Integer myPosition=(Integer) buttonView.getTag();
+                                CountryRowData model = getModel(myPosition);
+                                model.safe = isChecked;
+                                LinearLayout parent = (LinearLayout) buttonView.getParent();
+                                TextView label =
+                                        (TextView)parent.findViewById(R.id.countryTextView);
+                                label.setText(model.toString());
+                            }
+                        };
+                theSwitch.setOnCheckedChangeListener(l);
+            }
+
+            CountryRowData model = getModel(position);
+            theSwitch.setTag(position);
+            theSwitch.setChecked(model.safe);
+            return(row);
+        }
+    }
+
+    private static class CountryRowData {
+        private String name;
+        private boolean safe;
+
+        private CountryRowData(String n, boolean s) {
+            name = n;
+            safe = s;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
 
     private void createModel() {
         String[] rawData

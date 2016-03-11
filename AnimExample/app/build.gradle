@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "scolttm.examples"
-        minSdkVersion 12
-        targetSdkVersion 12
+        minSdkVersion 17
+        targetSdkVersion 21
     }
 
     buildTypes {

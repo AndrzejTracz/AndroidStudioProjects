@@ -3,39 +3,57 @@ package scottm.examples;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
-public class GraphicsExamplesActivity extends Activity implements View.OnTouchListener {
+public class GraphicsExamplesActivity extends Activity implements View.OnClickListener{
 
-    private GraphicsView gv;
+    // private GraphicsView gv;
+    private BalloonView bv;
+    private AnimationLoop animator;
+    private final int FPS = 50;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        gv = (GraphicsView) findViewById(R.id.graphics_view);
-        Log.d("GraphicsView", "gv object: " + gv);
-        gv.setOnTouchListener(this);
+        bv = (BalloonView) findViewById(R.id.graphics_view);
+        animator = new AnimationLoop(bv, FPS);
+        Log.d("GraphicsView", "gv object: " + bv);
+        bv.setOnClickListener(this);
     }
 
     public void onResume() {
         super.onResume();
-        gv = (GraphicsView) findViewById(R.id.graphics_view);
-        Log.d("GraphicsView", "gv object: " + gv);
+        if (!animator.isRunning()) {
+            animator.start();
+        }
+        Log.d("GraphicsView", "gv object: " + bv);
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("GraphicsView", "onTouch called.");
-        gv.toggleAnimation();
-        return true;
+    public void onClick(View view) {
+        // need to respond to clicks, not touches??
+        Log.d("GraphicsView", "onClick called.");
+        Log.d("GraphicsView", "animator is running: " + animator.isRunning());
+            if (animator.isRunning()) {
+                animator.stop();
+            } else {
+                animator.start();
+            }
+    }
+
+    public void onPause() {
+        super.onPause();
+        if (animator.isRunning()) {
+            animator.stop();
+        }
     }
 
     public void onStop() {
         super.onStop();
-        gv = (GraphicsView) findViewById(R.id.graphics_view);
-        Log.d("GraphicsView", "gv object: " + gv);
+        if (animator.isRunning()) {
+            animator.stop();
+        }
     }
 }

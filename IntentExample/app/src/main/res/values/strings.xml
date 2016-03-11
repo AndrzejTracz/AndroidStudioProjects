@@ -7,5 +7,8 @@
     <string name="no_camera_toast_message">Unable to take picture. No Camera Apps on this phone.</string>
     <string name="taking_picture_toast_message">Taking a picture!</string>
     <string name="take_a_picture_button_message">Take A Picture</string>
+    <string name="getNameInstructions">Get Name</string>
+    <string name="title_activity_get_name">GetName</string>
+    <string name="type_name_hint">Type Your Name!</string>
 
 </resources>

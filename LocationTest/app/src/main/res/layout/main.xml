@@ -13,16 +13,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/LinearLayoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
     <ToggleButton
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/toggleButton"
         android:onClick="toggleLocationProvider"
         android:textOn="GPS"
         android:textOff="Network"
         android:checked="true"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:layout_weight="1" />
 
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:text="Show Address"
+        android:id="@+id/addressButton"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:onClick="showAddress"
+        android:padding="10dp"
+        android:layout_weight="1" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scroll_view_1"

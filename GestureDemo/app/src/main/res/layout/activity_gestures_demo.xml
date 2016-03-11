@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="LAST GESTURE: "
-        android:textSize="24sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/gesture_type"
@@ -24,8 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36sp" />
+        android:textSize="26sp" />
 
     <TextView
         android:id="@+id/scale_factor_tv"
@@ -34,6 +33,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:text="Scale Factor: 1.0"
-        android:textSize="@dimen/scroll_text_view_text_size" />
+        android:textSize="26sp" />
 
 </LinearLayout>

@@ -19,6 +19,7 @@ package com.example.android.lifecycle;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import com.example.android.lifecycle.util.Utils;
  */
 public class ActivityA extends Activity {
 
+    private static final String TAG = "Activity A";
+
     private String mActivityName;
     private TextView mStatusView;
     private TextView mStatusAllView;
@@ -38,6 +41,7 @@ public class ActivityA extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "In onCreate method.");
         setContentView(R.layout.activity_a);
         mActivityName = getString(R.string.activity_a);
         mStatusView = (TextView)findViewById(R.id.status_view_a);
@@ -49,6 +53,7 @@ public class ActivityA extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "In onStart method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_start));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -56,6 +61,7 @@ public class ActivityA extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d(TAG, "In onRestart method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_restart));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -63,6 +69,7 @@ public class ActivityA extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "In onResume method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_resume));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -70,6 +77,7 @@ public class ActivityA extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "In onPause method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_pause));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -77,12 +85,14 @@ public class ActivityA extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG, "In onStop method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_stop));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "In onDestroy method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_destroy));
         mStatusTracker.clear();
     }

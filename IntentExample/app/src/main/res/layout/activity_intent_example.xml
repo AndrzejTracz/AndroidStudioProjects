@@ -5,12 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+
+    <Button
+        android:id="@+id/get_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:onClick="getName"
+        android:text="@string/getNameInstructions" />
+
     <Button
         android:id="@+id/take_picture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:onClick="takePhoto"
         android:text="@string/take_a_picture_button_message" />
 
@@ -18,7 +28,7 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.13"
+        android:layout_weight="0.8"
         android:src="@drawable/cheers" />
 
 </LinearLayout>

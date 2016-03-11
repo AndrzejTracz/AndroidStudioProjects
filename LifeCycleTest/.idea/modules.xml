@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LifeCycleTest.iml" filepath="$PROJECT_DIR$/LifeCycleTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/LifecycleTest.iml" filepath="$PROJECT_DIR$/app/LifecycleTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
-

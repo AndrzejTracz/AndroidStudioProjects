@@ -214,16 +214,17 @@ public class BoardView extends View {
 	}
 	
 	private void drawFeedback(Canvas canvas) {
-		Paint pegPaint = new Paint();
+		Paint blackPaint = new Paint(Color.BLACK);
+        Paint whitePaint = new Paint(Color.WHITE);
 		
 		for(int row = 0; row < game.guessesSoFar(); row++) {
 			String feedbackString = game.getFeedback(row);
-			pegPaint.setColor(Color.BLACK);
 			for(int col = 0; col < feedbackString.length(); col++) {
+                Paint paint = blackPaint;
 				if(feedbackString.charAt(col) == 'w')
-					pegPaint.setColor(Color.WHITE);
+					paint = whitePaint;
 				Circ c = feedback[row][col];
-				canvas.drawCircle(c.x, c.y, c.r, pegPaint);
+				canvas.drawCircle(c.x, c.y, c.r, paint);
 			}
 		}
 	}

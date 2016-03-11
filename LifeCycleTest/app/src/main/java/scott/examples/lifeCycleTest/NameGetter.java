@@ -30,7 +30,7 @@ public class NameGetter extends Activity {
         editText.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Log.d(TAG, "in on editior action");
+                Log.d(TAG, "in on editor action");
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     done(null);
@@ -39,7 +39,6 @@ public class NameGetter extends Activity {
                 return handled;
             }
         });
-        
     }
 
 

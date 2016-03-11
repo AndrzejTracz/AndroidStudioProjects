@@ -2,7 +2,6 @@ package scottm.utexas.gestures;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -14,9 +13,11 @@ public class GesturesDemo extends Activity
         implements GestureDetector.OnGestureListener, 
         GestureDetector.OnDoubleTapListener {
 
+    private static final String TAG = "GESTURE DEMO";
+
     private TextView gestureTypeTV;
     private TextView scaleFactorTV;
-    private GestureDetectorCompat gestureDetect;
+    private GestureDetector gestureDetect;
     private ScaleGestureDetector scaleDetector;
     private float scaleFactor = 1.f;
     private int textViewScaleFontSize;
@@ -29,14 +30,15 @@ public class GesturesDemo extends Activity
         gestureTypeTV = (TextView) findViewById(R.id.gesture_type);
         scaleFactorTV = (TextView) findViewById(R.id.scale_factor_tv);
         textViewScaleFontSize = (int) getResources().getDimension(R.dimen.scroll_text_view_text_size);
-        gestureDetect = new GestureDetectorCompat(this, this); // GACKY
+        gestureDetect = new GestureDetector(this, this); // GACKY
         gestureDetect.setIsLongpressEnabled(true);
         scaleDetector = new ScaleGestureDetector(this, new MyScaleListener());
     }
 
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) { 
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, event.toString());
         scaleDetector.onTouchEvent(event);
         if(event.getPointerCount() > 1) {
             gestureTypeTV.setText("MULTI TOUCH\nEVENT");
@@ -55,7 +57,7 @@ public class GesturesDemo extends Activity
 
     @Override
     public boolean onDown(MotionEvent e) {
-        gestureTypeTV.setText("DOWN");
+        gestureTypeTV.setText(R.string.down);
         return true;
     }
 
@@ -71,30 +73,30 @@ public class GesturesDemo extends Activity
 
     @Override
     public void onLongPress(MotionEvent e) {
-        gestureTypeTV.setText("LONG PRESS");
+        gestureTypeTV.setText(R.string.long_press);
     }
 
     @Override
     public boolean onScroll (MotionEvent e1, MotionEvent e2, 
             float distanceX, float distanceY) {
-        gestureTypeTV.setText("SCROLL");
+        gestureTypeTV.setText(R.string.scroll);
         return true;
     }
 
     @Override
     public void onShowPress(MotionEvent e) {
-        gestureTypeTV.setText("SHOW PRESS");       
+        gestureTypeTV.setText(R.string.show_press);
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        gestureTypeTV.setText("SINGLE TAP UP");
+        gestureTypeTV.setText(R.string.single_tap_up);
         return true;
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent arg0) {
-        gestureTypeTV.setText("DOUBLE TAP");
+        gestureTypeTV.setText(R.string.double_tap);
         return true;
     }
 

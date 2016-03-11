@@ -4,10 +4,11 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <scottm.examples.GraphicsView
+    <scottm.examples.BalloonView
         android:id="@+id/graphics_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="@string/hello" />
+        android:text="@string/hello"
+        android:background="#fff"/>
 
 </LinearLayout>

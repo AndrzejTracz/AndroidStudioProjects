@@ -93,24 +93,29 @@ public class GuessFourGame extends Activity {
 		
 		colorButtons = new Button[numColors];
 		LinearLayout buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
-
-		for(int buttonNum = 0; buttonNum < numColors; buttonNum++) {
+		float weight = (float) (1.0 / numColors);
+		LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				LinearLayout.LayoutParams.MATCH_PARENT, weight);
+		for (int buttonNum = 0; buttonNum < numColors; buttonNum++) {
 			final Button btn = new Button(this);
 			final Peg p = Peg.values()[buttonNum];
 			btn.setText(p.toString());
 			btn.getBackground().setColorFilter(pegColors.get(p), PorterDuff.Mode.MULTIPLY);
 			btn.setTextSize(16);
+			btn.setLayoutParams(param);
+            Log.d(TAG, "BUTTON PARAMETERS: " + ((LinearLayout.LayoutParams) btn.getLayoutParams()).weight);
 			btn.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					if(active) {
-						setNextPeg(p);
-						Log.d(TAG, "color button clicked:" + btn.getText());
-						boardView.invalidate();
-					} else {
-						newGame();
-					}
-				}
-			});
+                public void onClick(View v) {
+                    if (active) {
+                        setNextPeg(p);
+                        Log.d(TAG, "color button clicked:" + btn.getText());
+                        boardView.invalidate();
+                    } else {
+                        newGame();
+                    }
+                }
+            });
 			buttonContainer.addView(btn);
 			colorButtons[buttonNum] = btn;
 		}

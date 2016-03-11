@@ -10,13 +10,16 @@ package org.example.locationtest;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -25,8 +28,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class LocationTest extends Activity { 
     
@@ -49,6 +54,8 @@ public class LocationTest extends Activity {
 	private PowerManager.WakeLock wakeLock;
 	private ArrayList<SimpleLocationListener> mLocationListeners;
     private ToggleButton toggleButton;
+    private int tryCount;
+    private Location lastKnownLocation;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +79,7 @@ public class LocationTest extends Activity {
 		
 		
 		log("\nLocations (starting with last known):");
-		Location location 
+		lastKnownLocation
 		    = mgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		
 //		 Location location 
@@ -80,8 +87,9 @@ public class LocationTest extends Activity {
 		
 //		 Location location 
 //		        = mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER); 
-		
-		dumpLocation(location);
+		if (lastKnownLocation != null) {
+            dumpLocation(lastKnownLocation);
+        }
 	}
 
     public void toggleLocationProvider(View v) {
@@ -96,6 +104,91 @@ public class LocationTest extends Activity {
 
     }
 
+
+	// address Button clicked, show address
+	public void showAddress(View v) {
+        if (lastKnownLocation != null) {
+            tryCount = 0;
+            getAddress();
+        } else {
+            output.append("\n\nNo location available. Please try again later.\n\n");
+        }
+	}
+
+    private void getAddress() {
+        AsyncTask<Geocoder, Void, List<Address>>
+                addressFetcher = new AddFetch();
+        Geocoder gc = new Geocoder(this, Locale.US);
+        addressFetcher.execute(gc);
+    }
+
+    public void tryAgain() {
+        tryCount++;
+        if(tryCount < 5) {
+            getAddress();
+        } else {
+            output.append("Unable to access addresses. Try again later.\n\n");
+        }
+
+    }
+
+
+    private  class AddFetch extends AsyncTask<Geocoder, Void, List<Address>> {
+
+        List<Address> addresses;
+
+        @Override
+        protected List<Address> doInBackground(Geocoder... arg0) {
+            Geocoder gc = arg0[0];
+            Log.d(TAG, "Geocode is present: " + Geocoder.isPresent());
+            addresses = null;
+//            // "forwasrd geocoding": get lat and long from name or address
+//            try {
+//                addresses = gc.getFromLocationName(
+//                        "713 North Duchesne, St. Charles, MO", 5);
+//            } catch (IOException e) {}
+//            if(addresses != null && addresses.size() > 0) {
+//                double lat = addresses.get(0).getLatitude();
+//                double lng = addresses.get(0). getLongitude ();
+//                String zip = addresses.get(0).getPostalCode();
+//                Log.d(TAG, "FORWARD GEO CODING: lat: " + lat + ", long: " + lng + ", zip: " + zip);
+//            }
+//            Log.d(TAG, "forward geocoding address list: " + addresses);
+
+            // also try reverse geocoding, location from lat and long
+            tryReverseGeocoding(gc);
+            return addresses;
+        }
+
+        private void tryReverseGeocoding(Geocoder gc) {
+                double lat = lastKnownLocation.getLatitude();
+                double lng = lastKnownLocation.getLongitude();
+                Log.d(TAG, "REVERSE GEO CODE TEST lat: " + lat);
+                Log.d(TAG, "REVERSE GEO CODE TEST long: " + lng);
+                addresses = null;
+                try {
+                    addresses = gc.getFromLocation(lat, lng, 10); // maxResults
+                } catch (IOException e) {
+                }
+        }
+
+        protected void onPostExecute(List<Address> result) {
+            if(result == null) {
+                tryAgain();
+                Log.d(TAG, "\n\nNo addresses from Geocoder. Trying again. " +
+                        "Try count: " + tryCount);
+            } else {
+                    output.append("\n\nNumber of addresses " +
+                            "at current location :" + addresses.size());
+                    output.append("\n\nBEST ADDRESS FOR CURRENT LOCATION:");
+                    output.append(addresses.get(0).toString());
+                    Log.d(TAG, "reverse geocoding, " +
+                            "addresses from lat and long: "
+                            + addresses + " " + addresses.size());
+            }
+        }
+
+    }
 
     private void showCurrentLocation(String locationProvider) {
         Location location
@@ -164,6 +257,9 @@ public class LocationTest extends Activity {
 	    
 		public void onLocationChanged(Location location) {
 	        log("\n" + "onLocationChanged CALLED: ");
+            if (location != null) {
+                lastKnownLocation = location;
+            }
 		    dumpLocation(location);
 			Log.d("LocationTest", "Updated Location.");
 		}
