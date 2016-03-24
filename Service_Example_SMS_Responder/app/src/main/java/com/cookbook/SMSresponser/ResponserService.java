@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -24,10 +25,15 @@ public class ResponserService extends Service {
 	// sent by the Android system 
 	// when a SMS is received.
 	private static final String RECEIVED_ACTION 
-			= "android.provider.Telephony.SMS_RECEIVED";
-	
+			= Telephony.Sms.Intents.SMS_RECEIVED_ACTION;
+
+    // These are used in our own, home grown intents that
+    // will be broadcast when our automatic response
+    // is sent and delivered.
 	private static final String SENT_ACTION = "SMS_SENT";
-	private static final String DELIVERED_ACTION = "DELIVERED_SMS";
+
+
+	//private static final String DELIVERED_ACTION = "DELIVERED_SMS";
 
 	private String requester;
     private SharedPreferences myprefs;
@@ -41,13 +47,13 @@ public class ResponserService extends Service {
         // sentReceiver informed when message from our app sent
 	    registerReceiver(sentReceiver, new IntentFilter(SENT_ACTION));
 	    
-	    // deliverReceiver informed when message from our app delivered
-	    registerReceiver(deliverReceiver, new IntentFilter(DELIVERED_ACTION));
+//	    // deliverReceiver informed when message from our app delivered
+//	    registerReceiver(deliverReceiver, new IntentFilter(DELIVERED_ACTION));
        
 	    // receiver is the Broadcast receiver that actually responds to
 	    // incoming SMS messages
-	    IntentFilter receiverfilter = new IntentFilter(RECEIVED_ACTION);
-        registerReceiver(receiver, receiverfilter);
+	    IntentFilter intentFilter = new IntentFilter(RECEIVED_ACTION);
+        registerReceiver(receiver, intentFilter);
         
         // alternate Broadcast Receiver for knowing when message sent
 //        IntentFilter sendfilter = new IntentFilter(SENT_ACTION);
@@ -105,15 +111,15 @@ public class ResponserService extends Service {
     	Toast.makeText(this, "Auto respond SMS delivered", Toast.LENGTH_LONG).show();
     }
     
-   private BroadcastReceiver deliverReceiver = new BroadcastReceiver() {
-       // this is never getting called
-       
-        @Override public void onReceive(Context c, Intent in) {
-            //SMS delivered actions
-            Log.d(TAG, "in onReceive method of deliverReceiver");
-        	smsDelivered();
-        }    
-    };
+//   private BroadcastReceiver deliverReceiver = new BroadcastReceiver() {
+//       // this is never getting called
+//
+//        @Override public void onReceive(Context c, Intent in) {
+//            //SMS delivered actions
+//            Log.d(TAG, "in onReceive method of deliverReceiver");
+//        	smsDelivered();
+//        }
+//    };
     
     public void requestReceived(String f) {
     	Log.v(TAG,"In requestReceived. value of f: " + f);
@@ -159,19 +165,24 @@ public class ResponserService extends Service {
     	if(reply.length() == 0)
     		reply = "Thank you for your message. I am busy now. I will call you later";
         SmsManager sms = SmsManager.getDefault();
-    	Intent sentIn = new Intent(SENT_ACTION);
-    	PendingIntent sentPIn 
-    	    = PendingIntent.getBroadcast(this, 0, sentIn, 0);
+    	Intent sentIntent = new Intent(SENT_ACTION);
 
-    	Intent deliverIn = new Intent(DELIVERED_ACTION);
-    	PendingIntent deliverPIn 
-    	    = PendingIntent.getBroadcast(this, 0, deliverIn, 0);
-    	
+    	PendingIntent sentPendingIntent
+    	    = PendingIntent.getBroadcast(this, 0, sentIntent, 0);
+
     	if(reply.length() > 140)
     		reply = reply.substring(0, 140);
        
-        sms.sendTextMessage(requester, null, reply, sentPIn, deliverPIn);
+        sms.sendTextMessage(requester, null, reply, sentPendingIntent, null);
+        // parameters are: destination address, service center address(null for default),
+        // message, pending intent to be broadcast when message sent,
+        // pending intent to be broadcast when message delivered
 
+
+
+        //     	Intent deliverIntent = new Intent(DELIVERED_ACTION);
+//        PendingIntent deliverPendingIntent
+//                = PendingIntent.getBroadcast(this, 0, deliverIntent, 0);
     }
 
 
@@ -180,9 +191,11 @@ public class ResponserService extends Service {
 		super.onDestroy();
 		Log.d(TAG, "in onDestroy");
 		unregisterReceiver(receiver);
-		// unregisterReceiver(sender);
 		unregisterReceiver(sentReceiver);
-		unregisterReceiver(deliverReceiver);
+
+
+		// unregisterReceiver(deliverReceiver);
+        // unregisterReceiver(sender);
 	}
 
 	@Override

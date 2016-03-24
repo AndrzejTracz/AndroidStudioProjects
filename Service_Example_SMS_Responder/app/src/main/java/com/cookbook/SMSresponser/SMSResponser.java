@@ -78,6 +78,14 @@ public class SMSResponser extends Activity {
 		startMyService();
 	}
 
+	private void attemptToSendTimeZoneChange() {
+        // demonstrate that trying to send a protected broadcast intent
+        // results in shutdown of app
+		Intent timeZoneChange =
+                new Intent(Intent.ACTION_TIMEZONE_CHANGED);
+		sendBroadcast(timeZoneChange);
+	}
+
 	public void stopAutoRespond(View v) {
 		Log.d(TAG, "in stop auto respond");
 		Intent svc = new Intent(this, ResponserService.class);
