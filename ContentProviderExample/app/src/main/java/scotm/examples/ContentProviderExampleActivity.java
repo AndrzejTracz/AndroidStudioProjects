@@ -35,16 +35,16 @@ public class ContentProviderExampleActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         populateLisView(0);
-       // tryCalendarIntent();
         setContentView(R.layout.main);
         inputEditText = (EditText) findViewById(R.id.minSize);
     }
     
-    private void tryCalendarIntent() {
+    public void tryCalendarIntent(View v) {
+		Log.d(TAG, "Trying Calendar Intent");
     	Calendar beginTime = Calendar.getInstance();
-    	beginTime.set(2012, Calendar.NOVEMBER, 9, 8, 00);
+    	beginTime.set(2016, Calendar.APRIL, 4, 8, 00);
     	Calendar endTime = Calendar.getInstance();
-    	endTime.set(2012, Calendar.NOVEMBER, 9, 19, 00);
+    	endTime.set(2016, Calendar.APRIL, 4, 19, 00);
     	Intent intent = new Intent(Intent.ACTION_INSERT)
     	        .setData(Events.CONTENT_URI)
     	        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 
@@ -70,11 +70,11 @@ public class ContentProviderExampleActivity extends ListActivity {
 		
 		String[] columns = {MediaStore.Images.Media.DATE_TAKEN, 
 				MediaStore.Images.Media.SIZE,
-				MediaStore.Images.Media.ORIENTATION,
+				MediaStore.Images.Media.DATA,
 				MediaStore.Images.Media._ID};
 		
 		int[] textViewIds = {R.id.date_taken, 
-				R.id.size, R.id.orientation};
+				R.id.size, R.id.data, R.id.id};
 		
 		String selectionClause = MediaStore.Images.Media.SIZE + " > ?";
 		
@@ -84,8 +84,8 @@ public class ContentProviderExampleActivity extends ListActivity {
 			    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 
 			    columns,
 			    selectionClause,        
-			    selectionArgs,   
-			    MediaStore.Images.Media.SIZE);
+			    selectionArgs,
+                MediaStore.Images.Media.SIZE);
 		
 		
 		ListAdapter adapter = new MyAdapter(this,
@@ -96,6 +96,40 @@ public class ContentProviderExampleActivity extends ListActivity {
 		
 		setListAdapter(adapter); 
 	}
+//
+//    private void createOnItemClickListener() {
+//
+//        view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            public void onItemClick(AdapterView<?> parent,
+//                                    View v, int position, long id) {
+//
+//                Log.d(TAG, "Selected view: " + v);
+//
+//                String country = countries.get(position);
+//
+//                String toastString = "position: " + position +
+//                        ", id: " + id + "\ndata: "
+//                        + country;
+//
+//                // example if creating and showing a Toast. Cheers!
+//                Toast.makeText(ContentProviderExampleActivity.this,
+//                        toastString,
+//                        Toast.LENGTH_LONG).show();
+//
+////                // remove item selected from arraylist
+////                countries.remove(position);
+////                //
+////                adapter.notifyDataSetChanged();
+//
+//                //needed?
+//                // view.invalidateViews();
+//
+//                // if we want to perform web search for country
+//                // searchWeb(country);
+//            }
+//        });
+//    }
 
     public void filterBySize(View v) {
         int size = Integer.parseInt(inputEditText.getText().toString());

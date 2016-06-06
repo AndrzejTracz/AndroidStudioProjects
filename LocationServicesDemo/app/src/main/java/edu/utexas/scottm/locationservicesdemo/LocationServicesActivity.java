@@ -38,7 +38,7 @@ public class LocationServicesActivity extends Activity {
         super.onStop();
     }
 
-    private static class ConnectionListener
+    private  class ConnectionListener
             implements GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener {
 

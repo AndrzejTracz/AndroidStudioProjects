@@ -103,6 +103,7 @@ public class GuessFourGame extends Activity {
 			btn.setText(p.toString());
 			btn.getBackground().setColorFilter(pegColors.get(p), PorterDuff.Mode.MULTIPLY);
 			btn.setTextSize(16);
+			btn.setSingleLine();
 			btn.setLayoutParams(param);
             Log.d(TAG, "BUTTON PARAMETERS: " + ((LinearLayout.LayoutParams) btn.getLayoutParams()).weight);
 			btn.setOnClickListener(new View.OnClickListener() {

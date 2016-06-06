@@ -28,6 +28,7 @@ public class RandomArtActivity extends Activity {
 	private ProgressBar progressBar;
 	private Grays grays;
 	private Colors colors;
+
     // the expression used to determine the value at each pixel
 	private RandomExpression exp;
 	private boolean pickRandomExpression;
@@ -52,14 +53,14 @@ public class RandomArtActivity extends Activity {
         // start with blank and white
         useColors = false;
         // testParse();
-        setSequence();
+        // setSequence();
     }
     
-    private void setSequence() {
-    	ParseObject testObject = new ParseObject("Sequence");
-    	testObject.put("index", 65);
-    	testObject.saveInBackground();
-    }
+//    private void setSequence() {
+//    	ParseObject testObject = new ParseObject("Sequence");
+//    	testObject.put("index", 65);
+//    	testObject.saveInBackground();
+//    }
 
     // for testing only
     private void testParse() {
@@ -144,6 +145,7 @@ public class RandomArtActivity extends Activity {
 											= new GetCallback<ParseObject>() {
 		public void done(ParseObject object, ParseException e) {
 			if (e == null) {
+                Log.d(TAG, "returned object: " + object);
 				String equation = object.getString("equation");
 				exp = new RandomExpression(equation);
 				// now draw it
