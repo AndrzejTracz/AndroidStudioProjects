@@ -13,4 +13,5 @@ t*.zip
 **/.idea/libraries
 **/.DS_Store
 **/build
+**/app/build
 /maps
