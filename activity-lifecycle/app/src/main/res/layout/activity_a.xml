@@ -80,7 +80,7 @@ limitations under the License.
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="160dp">
+            android:layout_height="100dp">
 
             <TextView
                 android:id="@+id/status_view_a"
@@ -101,6 +101,22 @@ limitations under the License.
 
         <TextView
             android:id="@+id/status_view_all_a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="4dip"
+            android:textColor="@color/black"
+            android:typeface="monospace" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/on_pause_count"
+            android:textColor="@color/light_blue"
+            android:textSize="@dimen/font_medium" />
+
+        <TextView
+            android:id="@+id/on_pause_count_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"

@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
         android:entries="@array/football_clubs"
-        android:background="#f0f0ff"
         android:layout_margin="20dp" />
 
     <ImageView
@@ -39,7 +38,8 @@
         android:id="@+id/random_button"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:onClick="pickRandom"/>
 
 
 

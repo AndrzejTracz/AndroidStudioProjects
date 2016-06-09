@@ -32,11 +32,14 @@ import com.example.android.lifecycle.util.Utils;
 public class ActivityA extends Activity {
 
     private static final String TAG = "Activity A";
+    private static final String ON_PAUSE_KEY = "onPauseCounter";
 
     private String mActivityName;
     private TextView mStatusView;
     private TextView mStatusAllView;
+    private TextView mOnPauseCountView;
     private StatusTracker mStatusTracker = StatusTracker.getInstance();
+    private int mOnPauseCounter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,7 @@ public class ActivityA extends Activity {
         mActivityName = getString(R.string.activity_a);
         mStatusView = (TextView)findViewById(R.id.status_view_a);
         mStatusAllView = (TextView)findViewById(R.id.status_view_all_a);
+        mOnPauseCountView = (TextView) findViewById(R.id.on_pause_count_display);
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_create));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -69,7 +73,7 @@ public class ActivityA extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "In onResume method.");
+        Log.d(TAG, "Activity A. In onResume method.");
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_resume));
         Utils.printStatus(mStatusView, mStatusAllView);
     }
@@ -77,9 +81,31 @@ public class ActivityA extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "In onPause method.");
+        mOnPauseCounter++;
+        Log.d(TAG, "Activity A: In onPause method. onPause count = " + mOnPauseCounter);
+        String onPauseMessage = "Activity A: onPause count = " + mOnPauseCounter + "\n";
+        mOnPauseCountView.append(onPauseMessage);
         mStatusTracker.setStatus(mActivityName, getString(R.string.on_pause));
         Utils.printStatus(mStatusView, mStatusAllView);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle bundle) {
+        super.onRestoreInstanceState(bundle);
+        Log.d(TAG, "Activity A. In onRestoreInstanceState method.");
+        mOnPauseCountView.append("Activity A: In onRestoreInstanceState method.\n");
+        mOnPauseCountView.append("Activity A: onPauseCounter currently = " + mOnPauseCounter + "\n");
+        mOnPauseCounter = bundle.getInt(ON_PAUSE_KEY, 0);
+        mOnPauseCountView.append("Activity A: onPauseCounter reset to " + mOnPauseCounter + "\n");
+    }
+//
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        Log.d(TAG, "Activity A. In onSaveInstanceState method.");
+        mOnPauseCountView.append("Activity A: In onSaveInstanceState method." +
+                "Saving counter value of " + mOnPauseCounter + "\n");
+        bundle.putInt(ON_PAUSE_KEY, mOnPauseCounter);
     }
 
     @Override

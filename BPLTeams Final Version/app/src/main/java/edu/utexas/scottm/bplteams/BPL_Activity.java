@@ -19,7 +19,7 @@ public class BPL_Activity extends Activity {
     private static Random randNumGen = new Random();
 
     // Parallel list of images matched to spinner array
-    // Some what brittle. We assume the String array with
+    // Somewhat brittle. We assume the String array with
     // team names in Strings.xml matches the drawable name,
     // except for upper / lower case case and _ instead of spaces.
     private ArrayList<Integer> imageIDs;
@@ -28,10 +28,10 @@ public class BPL_Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bpl_);
+        setContentView(R.layout.activity_bpl_); // sets layout
         getImageIDs();
         setSpinnerListener();
-       //  setRandomButtonListener();
+         //setRandomButtonListener(); // comment out if onClick attribute set in XML
     }
 
     private void getImageIDs() {
