@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">Random Art</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_random_art">Random Art</string>
+	<string name="black_and_white">Black and White</string>
+	<string name="colors">Colors</string>
+</resources>

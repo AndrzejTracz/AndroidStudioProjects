@@ -23,13 +23,17 @@ public class SimpleMapActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_simple_map);
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+        map = ((MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map))
                 .getMap();
 
         if (map != null) {
             Marker austin
-                    = map.addMarker(new MarkerOptions().position(AUSTIN)
-                    .title("Austin"));
+                    = map.addMarker(new MarkerOptions()
+                    .position(AUSTIN)
+                    .title("Austin")
+                    .icon(BitmapDescriptorFactory
+                            .fromResource(R.drawable.longhorn)));
 
             Marker arlington = map.addMarker(new MarkerOptions()
                     .position(ARLINGTON)

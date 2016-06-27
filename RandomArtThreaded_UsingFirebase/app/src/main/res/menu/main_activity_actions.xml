@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/black_and_white"
+        android:icon="@drawable/black_and_white"
+        android:showAsAction="ifRoom"
+        android:title="@string/black_and_white"/>
+
+    <item
+        android:id="@+id/colors"
+        android:icon="@drawable/colors"
+        android:showAsAction="ifRoom"
+        android:title="@string/colors"/>
+
+</menu>

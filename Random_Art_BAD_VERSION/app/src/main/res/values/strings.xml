@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">Random Art BAD!!</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_random_art">Random Art BAD!!</string>
+    <string name="sample_art_url">http://www.cs.utexas.edu/~scottm/images/371m/sample_art.png</string>
+    <string name="new_art">Make New Art!</string>
+    <string name="unsafe_web_sample">Unsafe Web Sample</string>
+    <string name="safe_web_sample">Safe Web Sample</string>
+
+</resources>

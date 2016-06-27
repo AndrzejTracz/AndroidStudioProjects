@@ -1,7 +1,9 @@
 package scottm.cs378.example.intentexample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -26,8 +28,7 @@ public class IntentExample extends Activity {
     private Uri outputFileUri;
     private String fileName;
     private String extension;
-    private int pictureNumber; // Should read from shared preferences so
-    // we don't restart from zero each time!
+    private int imageNumber;
     private String pictureLocation;
 
     @Override
@@ -37,7 +38,7 @@ public class IntentExample extends Activity {
         setContentView(R.layout.activity_intent_example);
         fileName = Environment.getExternalStorageDirectory() + "/intentExamplePhotos/test";
         extension = ".jpg";
-        pictureNumber = 0; // should read from sharePreferences
+        imageNumber = readImageNumber();
     }
 
     @Override
@@ -46,10 +47,19 @@ public class IntentExample extends Activity {
         Log.d(TAG, "in onPause");
     }
 
+    private int readImageNumber() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getInt(getString(R.string.image_number_tag), 0);
+    }
+
     @Override
     public void onStop() {
         super.onStop();
         Log.d(TAG, "in onStop");
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.image_number_tag), imageNumber);
+        editor.apply();
     }
 
     @Override
@@ -86,7 +96,7 @@ public class IntentExample extends Activity {
             Log.d(TAG, "Photo saved to: " + outputFileUri.toString());
 
             // increment the picture number, so next picture saved as different file
-            pictureNumber++;
+            imageNumber++;
         } else if (resultCode == RESULT_CANCELED) {
             Bitmap onPictureImage
                     = BitmapFactory.decodeResource(getResources(),
@@ -122,10 +132,10 @@ public class IntentExample extends Activity {
         else
             Log.d(TAG, "mkdirs returned false: " + photoDir);
 
-        // create Intent to take picture via camera and specify location
+        // create Intent to take picture via cameras and specify location
         // to store image so we can retrieve easily
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        pictureLocation = fileName + pictureNumber + extension;
+        pictureLocation = fileName + imageNumber + extension;
         File file = new File(pictureLocation);
         outputFileUri = Uri.fromFile(file);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);

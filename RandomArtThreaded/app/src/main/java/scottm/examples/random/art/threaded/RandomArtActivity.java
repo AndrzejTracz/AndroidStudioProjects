@@ -35,6 +35,7 @@ public class RandomArtActivity extends Activity {
 	private boolean useColors;
     private boolean artInProgress;
     private Random r;
+    private ArtTaskInner artTaskInner;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,16 @@ public class RandomArtActivity extends Activity {
         // testParse();
         // setSequence();
     }
-    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "in onPause");
+        if (artTaskInner != null && artInProgress) {
+            Log.d(TAG, "calling cancel on artTaskInner");
+            artTaskInner.cancel(true);
+        }
+    }
 //    private void setSequence() {
 //    	ParseObject testObject = new ParseObject("Sequence");
 //    	testObject.put("index", 65);
@@ -75,7 +85,8 @@ public class RandomArtActivity extends Activity {
     	if(!artInProgress) {
 			artInProgress = true;
 			pickRandomExpression = true;
-			new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
+            artTaskInner = new ArtTaskInner();
+            artTaskInner.execute(artImage.getWidth(), artImage.getHeight());
 		}
     }
     
@@ -193,6 +204,9 @@ public class RandomArtActivity extends Activity {
     				yVal += Y_INC;
     			}
     			publishProgress(x);
+                if (isCancelled()) {
+                    break; // GACK!!!!!!!!!!!
+                }
     			xVal += X_INC;
     		}
     		return image;

@@ -17,33 +17,49 @@
         android:id="@+id/LinearLayoutButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:id="@+id/toggleButton"
-        android:onClick="toggleLocationProvider"
-        android:textOn="GPS"
-        android:textOff="Network"
-        android:checked="true"
         android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:padding="10dp"
-        android:layout_weight="1" />
+        android:orientation="horizontal">
+
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:checked="true"
+            android:onClick="toggleLocationProvider"
+            android:textOff="@string/network"
+            android:textOn="@string/gps" />
 
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="Show Address"
-        android:id="@+id/addressButton"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:onClick="showAddress"
-        android:padding="10dp"
-        android:layout_weight="1" />
+        <Button
+            android:id="@+id/addressButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:onClick="showAddress"
+            android:padding="10dp"
+            android:text="@string/show_address" />
+
+        <Button
+            android:id="@+id/mapButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:onClick="showMap"
+            android:text="@string/show_map" />
+
+        <Button
+            android:id="@+id/leaveNotice"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:onClick="setNearNotice"
+            android:padding="10dp"
+            android:text="@string/notify_near_gdc" />
     </LinearLayout>
 
     <ScrollView
