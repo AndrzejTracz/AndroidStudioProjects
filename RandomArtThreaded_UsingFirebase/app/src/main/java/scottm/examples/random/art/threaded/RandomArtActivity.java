@@ -12,13 +12,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -33,16 +31,18 @@ public class RandomArtActivity extends Activity {
 
     // the expression used to determine the value at each pixel
     private RandomExpression exp;
-    private boolean pickRandomExpression;
+    private boolean currentExpressionIsNew;
     private boolean useColors;
     private boolean artInProgress;
     private Random r;
     private ArtTaskInner artTaskInner;
+    private DatabaseReference equationListDatabase;
+    private DatabaseReference equationCountDatabase;
+    private int equationCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, "GACBq6Jwvf2PL7EIl3IRpvav7GEUZdki8gcSojgK", "l2PuQKbbnbXimsYrsgk0P7W2uOFxk89nfQrdy97r");
 
         r = new Random(3162000);
         this.setContentView(R.layout.main);
@@ -52,21 +52,59 @@ public class RandomArtActivity extends Activity {
         grays = new Grays();
         colors = new Colors();
         Log.d(TAG, "dimensions of image view: " + artImage.getWidth() + " " + artImage.getHeight());
-
         // start with blank and white
         useColors = false;
-        // setSequence();
-
-        testFirebase();
+        setUpFirebase();
+        // testFirebase();
     }
 
-    private void testFirebase() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("test message 1252");
+    private void setUpFirebase() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        equationListDatabase = database.getReference(getString(R.string.firebase_equation_list_name));
+        Log.d(TAG, "equation list key is: " + equationListDatabase.child("12"));
+        equationCountDatabase = database.getReference(getString(R.string.firebase_equation_count_name));
 
-        myRef.setValue("Hello, World!!!!!!!!");
+        equationListDatabase.child("12").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        EquationForStorage eq = dataSnapshot.getValue(EquationForStorage.class);
+                        Log.d(TAG, "read equation: " + eq.getEquation());
+                        // ...
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Log.d(TAG, "onDataChanged call for Value Event Listener. new value: " + dataSnapshot.getValue());
+                equationCount = ((Long) dataSnapshot.getValue()).intValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        equationCountDatabase.addValueEventListener(postListener);
     }
+
+//    private void testFirebase() {
+//        // Write a message to the database
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("test message 1252");
+//
+//        myRef.setValue("Hello, World!!!!!!!!");
+//    }
 
     @Override
     public void onPause() {
@@ -75,57 +113,95 @@ public class RandomArtActivity extends Activity {
         if (artTaskInner != null && artInProgress) {
             Log.d(TAG, "calling cancel on artTaskInner");
             artTaskInner.cancel(true);
+            artInProgress = false;
         }
     }
-//    private void setSequence() {
-//    	ParseObject testObject = new ParseObject("Sequence");
-//    	testObject.put("index", 65);
-//    	testObject.saveInBackground();
-//    }
 
 
     public void newArt(View v) {
         Log.d(TAG, "dimensions of image view: " + artImage.getWidth() + " " + artImage.getHeight());
         if (!artInProgress) {
             artInProgress = true;
-            pickRandomExpression = true;
+            currentExpressionIsNew = true;
             artTaskInner = new ArtTaskInner();
             artTaskInner.execute(artImage.getWidth(), artImage.getHeight());
         }
     }
 
+//    private void onStarClicked(DatabaseReference postRef) {
+//        postRef.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                Post p = mutableData.getValue(Post.class);
+//                if (p == null) {
+//                    return Transaction.success(mutableData);
+//                }
+//
+//                if (p.stars.containsKey(getUid())) {
+//                    // Unstar the post and remove self from stars
+//                    p.starCount = p.starCount - 1;
+//                    p.stars.remove(getUid());
+//                } else {
+//                    // Star the post and add self to stars
+//                    p.starCount = p.starCount + 1;
+//                    p.stars.put(getUid(), true);
+//                }
+//
+//                // Set value and report transaction success
+//                mutableData.setValue(p);
+//                return Transaction.success(mutableData);
+//            }
+//
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b,
+//                                   DataSnapshot dataSnapshot) {
+//                // Transaction completed
+//                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+//            }
+//        });
+//    }
+
     public void saveEquation(View v) {
-        if (exp != null && pickRandomExpression) {
+        if (exp != null && currentExpressionIsNew) {
+            currentExpressionIsNew = false;
+            int newCount = equationCount + 1;
+            Log.d(TAG, "Setting new count. Old count: " + equationCount + ", new count: " + newCount);
+            // equationCountDatabase.setValue(newCount);
+            // int count = equationCountDatabase.getValue();
+//            // get the equation count and update
+//
+//            equationCountDatabase.runTransaction(new Transaction.Handler() {
+//                @Override
+//                public Transaction.Result doTransaction(MutableData mutableData) {
+//                    Post p = mutableData.getValue(Post.class);
+//                    if (p == null) {
+//                        return Transaction.success(mutableData);
+//                    }
+//
+//                    if (p.stars.containsKey(getUid())) {
+//                        // Unstar the post and remove self from stars
+//                        p.starCount = p.starCount - 1;
+//                        p.stars.remove(getUid());
+//                    } else {
+//                        // Star the post and add self to stars
+//                        p.starCount = p.starCount + 1;
+//                        p.stars.put(getUid(), true);
+//                    }
+//
+//                    // Set value and report transaction success
+//                    mutableData.setValue(p);
+//                    return Transaction.success(mutableData);
+//                }
+//
+//                @Override
+//                public void onComplete(DatabaseError databaseError, boolean b,
+//                                       DataSnapshot dataSnapshot) {
+//                    // Transaction completed
+//                    Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+//                }
+//            });
 
-            final int[] count = {0};
 
-            ParseQuery<ParseObject> countQuery
-                    = ParseQuery.getQuery("ArtExpressionCount");
-
-
-
-            countQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject masterCount, ParseException e) {
-                    if (e == null) {
-                        count[0] = masterCount.getInt("TheCount");
-                        Log.d(TAG, "The Count via the master count object: " + count[0]);
-                        masterCount.increment("TheCount");
-                        masterCount.saveInBackground();
-
-                        ParseObject currentExpression
-                                = new ParseObject("ArtExpression");
-
-                        currentExpression.put("equation", exp.toString());
-                        currentExpression.put("votes", 1);
-                        currentExpression.put("index", count[0]);
-                        currentExpression.saveInBackground();
-                        testFirebase(count[0], exp.toString());
-                    } else {
-                        Log.d(TAG, "Unable to get count, not saving expression. Exception: " + e);
-                    }
-                }
-            });
 
 
         }
@@ -145,48 +221,48 @@ public class RandomArtActivity extends Activity {
     // SHOULD CHECK THAT IF CURRENT DISPLAY IS SAVED VERSION, WE DON"T PICK THE SAME
     // EQUATION. MUST BE NEW!!!!
     public void getRandomGoodArt(View v) {
-        pickRandomExpression = false;
+        currentExpressionIsNew = false;
 
-        ParseQuery<ParseObject> countQuery
-                = ParseQuery.getQuery("ArtExpressionCount");
-
-        countQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject masterCount, ParseException e) {
-                if (e == null) {
-                    int count = masterCount.getInt("TheCount");
-                    int randomIndex = r.nextInt(count);
-                    Log.d(TAG, "The Count via the master count object: " + count);
-
-                    ParseQuery<ParseObject> query
-                            = ParseQuery.getQuery("ArtExpression");
-                    query.whereGreaterThanOrEqualTo("index", randomIndex);
-                    query.getFirstInBackground(setRandomExpressionFromQuery);
-                } else {
-                    Log.d(TAG, "Unable to get count to get random expression");
-                }
-            }
-        });
+//        ParseQuery<ParseObject> countQuery
+//                = ParseQuery.getQuery("ArtExpressionCount");
+//
+//        countQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+//            @Override
+//            public void done(ParseObject masterCount, ParseException e) {
+//                if (e == null) {
+//                    int count = masterCount.getInt("TheCount");
+//                    int randomIndex = r.nextInt(count);
+//                    Log.d(TAG, "The Count via the master count object: " + count);
+//
+//                    ParseQuery<ParseObject> query
+//                            = ParseQuery.getQuery("ArtExpression");
+//                    query.whereGreaterThanOrEqualTo("index", randomIndex);
+//                    query.getFirstInBackground(setRandomExpressionFromQuery);
+//                } else {
+//                    Log.d(TAG, "Unable to get count to get random expression");
+//                }
+//            }
+//        });
     }
 
 
-    private GetCallback<ParseObject> setRandomExpressionFromQuery
-            = new GetCallback<ParseObject>() {
-        public void done(ParseObject object, ParseException e) {
-            if (e == null) {
-                Log.d(TAG, "returned object: " + object);
-                String equation = object.getString("equation");
-                exp = new RandomExpression(equation);
-                // now draw it
-                Log.d(TAG, "equation: " + equation);
-                Log.d(TAG, "index of expression: " + object.getInt("index"));
-                new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
-            } else {
-                Log.d(TAG, "Unable to get the given random expression");
-                exp = null; // so we just pick a new random
-            }
-        }
-    };
+//    private GetCallback<ParseObject> setRandomExpressionFromQuery
+//            = new GetCallback<ParseObject>() {
+//        public void done(ParseObject object, ParseException e) {
+//            if (e == null) {
+//                Log.d(TAG, "returned object: " + object);
+//                String equation = object.getString("equation");
+//                exp = new RandomExpression(equation);
+//                // now draw it
+//                Log.d(TAG, "equation: " + equation);
+//                Log.d(TAG, "index of expression: " + object.getInt("index"));
+//                new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
+//            } else {
+//                Log.d(TAG, "Unable to get the given random expression");
+//                exp = null; // so we just pick a new random
+//            }
+//        }
+//    };
 
 
     private class ArtTaskInner extends AsyncTask<Integer, Integer, Bitmap> {
@@ -202,7 +278,7 @@ public class RandomArtActivity extends Activity {
 
         @Override
         protected Bitmap doInBackground(Integer... dimensions) {
-            if (pickRandomExpression || exp == null)
+            if (currentExpressionIsNew || exp == null)
                 exp = new RandomExpression();
 
             Log.d(TAG, "current expression: " + exp.toString());
@@ -278,24 +354,3 @@ public class RandomArtActivity extends Activity {
     }
 
 }
-
-
-/* OLD WAY OF COUNTING NUMBER OF ITEMS IN TABLE, COUNT SLOW?
-
-			// determine number of expressions saved and make index the next one
-			 ParseQuery<ParseObject> query = ParseQuery.getQuery("ArtExpression");
-
-			 query.countInBackground(new CountCallback() {
-			     public void done(int count, ParseException e) {
-			         if (e == null) {
-			        	ParseObject currentExpression = new ParseObject("ArtExpression");
-			 			currentExpression.put("equation", exp.toString());
-			 			currentExpression.put("votes", 1);
-			 			currentExpression.put("index", count);
-			 			currentExpression.saveInBackground();
-			         } else {
-			             Log.d(TAG, "Unable to get count, not saving expression");
-			         }
-			     }
-			 });
- */

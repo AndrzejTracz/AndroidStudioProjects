@@ -258,26 +258,4 @@ public class RandomArtActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }
-
-
-/* OLD WAY OF COUNTING NUMBER OF ITEMS IN TABLE, COUNT SLOW?
-
-			// determine number of expressions saved and make index the next one
-			 ParseQuery<ParseObject> query = ParseQuery.getQuery("ArtExpression");
-
-			 query.countInBackground(new CountCallback() {
-			     public void done(int count, ParseException e) {
-			         if (e == null) {
-			        	ParseObject currentExpression = new ParseObject("ArtExpression");
-			 			currentExpression.put("equation", exp.toString());
-			 			currentExpression.put("votes", 1);
-			 			currentExpression.put("index", count);
-			 			currentExpression.saveInBackground();
-			         } else {
-			             Log.d(TAG, "Unable to get count, not saving expression");
-			         }
-			     }
-			 });
- */

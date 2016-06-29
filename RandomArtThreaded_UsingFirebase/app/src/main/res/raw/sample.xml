@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="TIE" value="6" />
+    <boolean name="mHumansTurnToMove" value="true" />
+    <string name="board_state">         </string>
+    <string name="info">You go first.</string>
+    <boolean name="mHumanGoesFirst" value="true" />
+    <boolean name="mGameOver" value="false" />
+    <string name="difficulty_level">Harder</string>
+    <string name="victory_message">You crushed Android!!!</string>
+    <int name="ANDROID" value="0" />
+    <int name="difficulty" value="0" />
+    <boolean name="sound" value="true" />
+    <boolean name="result_image" value="false" />
+    <int name="HUMAN" value="3" />
+</map>
