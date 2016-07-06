@@ -61,24 +61,8 @@ public class RandomArtActivity extends Activity {
     private void setUpFirebase() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         equationListDatabase = database.getReference(getString(R.string.firebase_equation_list_name));
-        Log.d(TAG, "equation list key is: " + equationListDatabase.child("12"));
+        // Log.d(TAG, "equation list key is: " + equationListDatabase.child("12"));
         equationCountDatabase = database.getReference(getString(R.string.firebase_equation_count_name));
-
-        equationListDatabase.child("12").addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        EquationForStorage eq = dataSnapshot.getValue(EquationForStorage.class);
-                        Log.d(TAG, "read equation: " + eq.getEquation());
-                        // ...
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                    }
-                });
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -166,44 +150,12 @@ public class RandomArtActivity extends Activity {
             currentExpressionIsNew = false;
             int newCount = equationCount + 1;
             Log.d(TAG, "Setting new count. Old count: " + equationCount + ", new count: " + newCount);
-            // equationCountDatabase.setValue(newCount);
-            // int count = equationCountDatabase.getValue();
-//            // get the equation count and update
-//
-//            equationCountDatabase.runTransaction(new Transaction.Handler() {
-//                @Override
-//                public Transaction.Result doTransaction(MutableData mutableData) {
-//                    Post p = mutableData.getValue(Post.class);
-//                    if (p == null) {
-//                        return Transaction.success(mutableData);
-//                    }
-//
-//                    if (p.stars.containsKey(getUid())) {
-//                        // Unstar the post and remove self from stars
-//                        p.starCount = p.starCount - 1;
-//                        p.stars.remove(getUid());
-//                    } else {
-//                        // Star the post and add self to stars
-//                        p.starCount = p.starCount + 1;
-//                        p.stars.put(getUid(), true);
-//                    }
-//
-//                    // Set value and report transaction success
-//                    mutableData.setValue(p);
-//                    return Transaction.success(mutableData);
-//                }
-//
-//                @Override
-//                public void onComplete(DatabaseError databaseError, boolean b,
-//                                       DataSnapshot dataSnapshot) {
-//                    // Transaction completed
-//                    Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-//                }
-//            });
-
-
-
-
+            equationCountDatabase.setValue(newCount);
+            String equation = exp.toString();
+            // Add current equation to Firebase database
+            EquationForStorage newExpression
+                    = new EquationForStorage(equation, newCount, 1, 0, System.currentTimeMillis());
+            equationListDatabase.child("" + newCount).setValue(newExpression);
         }
     }
 
@@ -218,31 +170,30 @@ public class RandomArtActivity extends Activity {
     }
 
 
-    // SHOULD CHECK THAT IF CURRENT DISPLAY IS SAVED VERSION, WE DON"T PICK THE SAME
-    // EQUATION. MUST BE NEW!!!!
     public void getRandomGoodArt(View v) {
-        currentExpressionIsNew = false;
+        if (!artInProgress) {
+            currentExpressionIsNew = false;
+            int randomID = r.nextInt(equationCount);
+            equationListDatabase.child(randomID + "").addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // Get user value
+                            EquationForStorage eq
+                                    = dataSnapshot.getValue(EquationForStorage.class);
+                            Log.d(TAG, "read expression: " + eq.getEquation());
+                            exp = new RandomExpression(eq.getEquation());
+                            // now draw it
+                            Log.d(TAG, "index / id of expression: " + eq.getId());
+                            new ArtTaskInner().execute(artImage.getWidth(), artImage.getHeight());
+                        }
 
-//        ParseQuery<ParseObject> countQuery
-//                = ParseQuery.getQuery("ArtExpressionCount");
-//
-//        countQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-//            @Override
-//            public void done(ParseObject masterCount, ParseException e) {
-//                if (e == null) {
-//                    int count = masterCount.getInt("TheCount");
-//                    int randomIndex = r.nextInt(count);
-//                    Log.d(TAG, "The Count via the master count object: " + count);
-//
-//                    ParseQuery<ParseObject> query
-//                            = ParseQuery.getQuery("ArtExpression");
-//                    query.whereGreaterThanOrEqualTo("index", randomIndex);
-//                    query.getFirstInBackground(setRandomExpressionFromQuery);
-//                } else {
-//                    Log.d(TAG, "Unable to get count to get random expression");
-//                }
-//            }
-//        });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        }
+                    });
+        }
     }
 
 

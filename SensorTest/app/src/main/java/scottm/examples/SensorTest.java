@@ -169,7 +169,7 @@ public class SensorTest extends Activity {
                 sensorValues[i].setText("" + value);
             }
            lastTime = currentTime;
-       };
+       }
     }
 
     private SensorEventListener sensorEventListener =

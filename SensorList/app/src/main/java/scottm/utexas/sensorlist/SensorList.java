@@ -1,16 +1,15 @@
 package scottm.utexas.sensorlist;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SensorList extends ListActivity {
     

@@ -24,10 +24,6 @@ import android.widget.FrameLayout;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//import org.openintents.sensorsimulator.hardware.Sensor;
-//import org.openintents.sensorsimulator.hardware.SensorEvent;
-//import org.openintents.sensorsimulator.hardware.SensorEventListener;
-//import org.openintents.sensorsimulator.hardware.SensorManagerSimulator;
 
 public class TiltBallActivity extends Activity {
 	
