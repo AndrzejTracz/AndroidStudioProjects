@@ -14,7 +14,7 @@
   			android:id="@+id/boardview"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:padding="5dip"
+			android:padding="5dp"
 			android:layout_weight="2"/>
 		<LinearLayout
     		android:id="@+id/buttonContainer"

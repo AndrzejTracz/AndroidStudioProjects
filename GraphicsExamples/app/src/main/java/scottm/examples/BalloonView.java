@@ -19,7 +19,9 @@ public class BalloonView extends View {
 
 
     private static final int MAX_BALLOONS = 20;
-    private static final double newBalloonsPerFrame = 1.0 / 25;
+    private static final
+        double newBalloonsPerFrame = 1.0 / 25;
+
     private Paint paint;
 
     private HashSet<Balloon> balloons;
@@ -37,7 +39,8 @@ public class BalloonView extends View {
 
     }
 
-    public BalloonView(Context context, AttributeSet attrs, int defStyle) {
+    public BalloonView(Context context, AttributeSet attrs,
+                       int defStyle) {
         super(context, attrs, defStyle);
         initialize();
     }
@@ -56,7 +59,9 @@ public class BalloonView extends View {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
         updateBalloons();
-        if (balloons.size() == 0 || random.nextDouble() < newBalloonsPerFrame) {
+        double randomValue = random.nextDouble();
+        if (balloons.size() == 0
+                || randomValue < newBalloonsPerFrame) {
             addBalloon(height, width);
         }
         for (Balloon b : balloons) {

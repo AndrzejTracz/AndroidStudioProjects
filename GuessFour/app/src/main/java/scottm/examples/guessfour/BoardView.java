@@ -132,7 +132,7 @@ public class BoardView extends View {
 			for(int c = 0; c < feedback[0].length; c++) {
 				feedback[r][c].setData(x, y, radius);
 				if (c == pegsPerHalf - 1) {
-					// once first half of feedback done, move down and back
+					// once first half of feedback done, move down and back to the left
 					x = guessWidth - widthAvailable / 2;
 					y += heightAvailable;
 				}
@@ -159,6 +159,7 @@ public class BoardView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		Log.d(TAG, "in onDraw");
 		drawBackgroundAndGrid(canvas);
 		drawUserGuesses(canvas);
 		drawFeedback(canvas);
